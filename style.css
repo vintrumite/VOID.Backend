@@ -1,0 +1,243 @@
+:root{
+--green:#16c784;
+--dark:#0e1525;
+--gray:#6b7280;
+}
+
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: white;
+  color: #131313; /* white text for contrast */
+}
+
+heade { 
+  background-color: #1e1e1e; 
+  color: white; /* accent yellow */ 
+}
+
+.section1 { 
+  background-color: #222222; 
+  color: #dddddd; 
+  padding: 20px; 
+  margin: 10px 0; 
+}
+
+.background-gradient {
+  background: linear-gradient(to bottom right, rgb(216, 255, 216), white);
+}
+
+.nav{display:flex;justify-content:space-between;align-items:center;padding:20px 50px;background:#fff}
+.nav a{text-decoration:none;margin-left:20px;color:#333}
+.logo{font-weight:bold;font-size:20px}
+
+.btn{background:var(--green);color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none}
+.btn.big{padding:14px 26px;font-size:16px}
+
+.hero{text-align:center;font-size:40px;font-weight: 700;line-height: 1.1;margin-bottom: 20px;padding:210px}
+.container {
+ max-width: 600px; /* Adjust max-width to control how wide the content spreads */
+ padding: 20px;
+ box-sizing: border-box; /* Include padding in the element's total width and height */
+ background: linear-gradient(to right, #e4fadb 0%, #ecfde5 10%, #ffffff 100%);
+
+}
+
+.title {
+ font-size: 40px; /* Base font size for "List Your Coin on" */
+ font-weight: 700; /* Bolder text */
+ line-height: 1.1; /* Adjust line height for better spacing between lines */
+ margin-bottom: 20px;
+ color: #000000; /* Black text for "List Your Coin on" */
+}
+
+.title .highlight {
+ font-size: 1.2em; /* Make "Coinranking" slightly larger than the base title font size */
+ color: #5ed100; /* Orange color for "Coinranking" */
+ font-weight: 700; /* Ensure it's bold */
+}
+
+.description {
+ font-size: 16px; /* Standard paragraph text size */
+ color: #666666; /* Grey text for description */
+ line-height: 1.5;
+ margin-bottom: 30px;
+ padding: 0 20px; /* Add some horizontal padding for better readability */
+ max-width: 500px; /* Constrain description width for better text flow */
+ margin-left: auto; /* Center the description paragraph */
+ margin-right: auto; /* Center the description paragraph */
+}
+
+.buttons {
+ display: flex;
+ justify-content: center;
+ gap: 15px; /* Space between the two buttons */
+}
+
+.primary-button, .secondary-button {
+ padding: 12px 25px;
+ border: none;
+ border-radius: 5px;
+ font-size: 16px;
+ cursor: pointer;
+ transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Smooth transitions for hover effects */
+ font-weight: 600; /* Slightly bold button text */
+}
+
+.primary-button {
+ background-color: #66e200; /* Orange background for the primary button */
+ color: white;
+}
+
+.primary-button:hover {
+ background-color: #73ff00; /* Slightly darker orange on hover */
+}
+
+.secondary-button {
+ background-color: transparent;
+ color: #666666; /* Grey text for the secondary button */
+ border: 1px solid #cccccc; /* Light grey border */
+}
+
+.secondary-button:hover {
+ background-color: #f0f0f0; /* Very light grey background on hover */
+ color: #333333; /* Darker text on hover */
+ border-color: #bbbbbb; /* Slightly darker border on hover */
+}
+
+.hero span{color:#73ff00}
+.hero p{max-width:600px;margin:20px auto;color:var(--gray)}
+
+.stats{display:flex;justify-content:space-around;background:#fff;padding:80}
+.stats h2{color:var(--green)}
+
+.benefits,.how{text-align:center;padding:60px 20px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;margin-top:30px}
+.card{background:#fff;padding:30px;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,.05)}
+
+.steps{display:flex;justify-content:center;align-items:center;gap:20px;margin:30px 0}
+.step{background:#fff;padding:15px 25px;border-radius:40px}
+
+footer{text-align:center;background:#0e1525;color:#fff;padding:30px}
+footer a{color:var(--green)}
+
+.fade{opacity:0;transform:translateY(30px);transition:0.6s}
+.fade.show{opacity:1;transform:translateY(0)}
+
+.form-container{max-width:800px;margin:40px auto;padding:20px}
+
+.token-form{background:#fff;padding:30px;border-radius:12px;box-shadow:0 5px 25px rgba(0,0,0,.06)}
+
+.token-form h3{margin-top:25px;color:#16c784}
+
+.token-form label{display:block;margin-top:15px;font-weight:600}
+
+.token-form input,.token-form textarea,.token-form select{
+  width:100%;padding:10px;margin-top:6px;border:1px solid #ddd;border-radius:6px
+}
+
+.token-form textarea{height:90px}
+
+.token-form button{
+  margin-top:25px;padding:12px;background:#16c784;color:#fff;border:none;border-radius:6px;cursor:pointer
+}
+
+.topbar{display:flex;align-items:center;gap:20px;padding:20px;background:#fff;border-bottom:1px solid #eee}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.hidden { display: none !important; }
+
+.modal-card {
+  background: #0b0e11;
+  color: #fff;
+  padding: 28px;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(0,0,0,.6);
+}
+
+.modal-card h2 {
+  margin-bottom: 10px;
+}
+
+.desc {
+  color: #aaa;
+  margin-bottom: 20px;
+}
+
+.primary-btn {
+  background: #f0b90b;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  width: 100%;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.secondary-btn {
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid #333;
+  color: #aaa;
+  padding: 10px;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.status {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+/* Hide mobile menu and hamburger by default */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+}
+.hamburger div {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+}
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background-color: #1e1e1e; /* same as header */
+  position: absolute;
+  top: 60px; /* adjust if your header is taller */
+  left: 0;
+  width: 100%;
+  z-index: 999;
+}
+.mobile-menu li {
+  padding: 10px 20px;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .desktop-menu {
+    display: none; /* hide desktop menu on mobile */
+  }
+  .hamburger {
+    display: flex; /* show hamburger */
+  }
+  .mobile-menu.show {
+    display: flex; /* show dropdown when active */
+  }
+}
